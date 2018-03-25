@@ -1,7 +1,7 @@
 FROM alpine:latest
 LABEL maintainer="jonathan@pulsifer.ca"
 
-ENV HUGO_VERSION 0.29
+ENV HUGO_VERSION 0.37.1
 
 RUN addgroup -S hugo && adduser -S -g hugo hugo 
 
