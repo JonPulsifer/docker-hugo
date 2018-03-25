@@ -1,0 +1,58 @@
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: hugo
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: 'docker/default'
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: 'localhost/docker-hugo'
+    seccomp.security.alpha.kubernetes.io/defaultProfileName:  'docker/default'
+    apparmor.security.beta.kubernetes.io/defaultProfileName:  'localhost/docker-hugo'
+spec:
+  privileged: false
+  # Required to prevent escalations to root.
+  allowPrivilegeEscalation: false
+  defaultAllowPrivilegeEscalation: false
+  # This is redundant with non-root + disallow privilege escalation,
+  # but we can provide it for defense in depth.
+  requiredDropCapabilities:
+  - AUDIT_WRITE      # Write records to kernel auditing log.
+  - CHOWN            # Make arbitrary changes to file UIDs and GIDs (see chown(2)).
+  - DAC_OVERRIDE     # Bypass file read, write, and execute permission checks.
+  - FOWNER           # Bypass permission checks on operations that normally require the file system UID of the process to match the UID of the file.
+  - FSETID           # Don’t clear set-user-ID and set-group-ID permission bits when a file is modified.
+  - KILL             # Bypass permission checks for sending signals.
+  - MKNOD            # Create special files using mknod(2).
+  - NET_BIND_SERVICE # Bind a socket to internet domain privileged ports (port numbers less than 1024).
+  - NET_RAW          # Use RAW and PACKET sockets.
+  - SETFCAP          # Set file capabilities.
+  - SETGID           # Make arbitrary manipulations of process GIDs and supplementary GID list.
+  - SETPCAP          # Modify process capabilities.
+  - SETUID           # Make arbitrary manipulations of process UIDs.
+  - SYS_CHROOT       # Use chroot(2), change root directory.
+  # Allow core volume types.
+  volumes:
+  - 'gitRepo'
+  - 'emptyDir'
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+  runAsUser:
+    # Require the container to run without root privileges.
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1000
+        max: 1000
+  seLinux:
+    # This policy assumes the nodes are using AppArmor rather than SELinux.
+    rule: 'RunAsAny'
+  supplementalGroups:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1000
+        max: 1000
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1000
+        max: 1000
+  readOnlyRootFilesystem: true
