@@ -4,9 +4,9 @@ metadata:
   name: hugo
   annotations:
     seccomp.security.alpha.kubernetes.io/allowedProfileNames: 'docker/default'
-    apparmor.security.beta.kubernetes.io/allowedProfileNames: 'localhost/docker-hugo'
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: 'runtime/docker-default'
     seccomp.security.alpha.kubernetes.io/defaultProfileName:  'docker/default'
-    apparmor.security.beta.kubernetes.io/defaultProfileName:  'localhost/docker-hugo'
+    apparmor.security.beta.kubernetes.io/defaultProfileName:  'runtime/docker-default'
 spec:
   privileged: false
   # Required to prevent escalations to root.
