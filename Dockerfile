@@ -3,7 +3,7 @@ LABEL maintainer="jonathan@pulsifer.ca"
 
 ENV HUGO_VERSION 0.29
 
-RUN addgroup -S hugo && adduser -S -g hugo hugo 
+RUN addgroup -Sg 1000 hugo && adduser -SH -u 1000 -G hugo hugo
 
 ADD https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.tar.gz /tmp
 ADD https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_checksums.txt /tmp
@@ -18,6 +18,6 @@ RUN apk upgrade && apk add --no-cache tini \
  && mkdir -vp /var/www \
  && chown -R hugo:hugo /var/www
 
-USER hugo
+USER 1000
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["/usr/bin/hugo", "server", "--disableLiveReload", "--watch=false", "--bind=0.0.0.0", "--source=/var/www"]
